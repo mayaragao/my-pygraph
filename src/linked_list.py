@@ -25,12 +25,16 @@ class SinglyLinkedList:
         Return a string representation of the list.
         Takes O(n) time.
         """
+        nodes = self.get_list()
+        return '[' + ', '.join(nodes) + ']'
+
+    def get_list(self):
         nodes = []
         curr = self.head
         while curr:
             nodes.append(repr(curr))
             curr = curr.next
-        return '[' + ', '.join(nodes) + ']'
+        return nodes
 
     def prepend(self, data):
         """
@@ -41,18 +45,19 @@ class SinglyLinkedList:
         self.num_itens += 1
 
     def append(self, data):
+       
         """
         Insert a new element at the end of the list.
         Takes O(n) time.
         """
         if not self.head:
             self.head = ListNode(data=data)
+            self.num_itens += 1
             return
         curr = self.head
         while curr.next:
             curr = curr.next
         curr.next = ListNode(data=data)
-
         self.num_itens += 1
 
     def find(self, key):
@@ -80,7 +85,7 @@ class SinglyLinkedList:
             curr = curr.next
         # Unlink it from the list
         if curr:
-            self.num_itens += 1
+            self.num_itens -= 1
         if prev is None:
             self.head = curr.next
         elif curr:

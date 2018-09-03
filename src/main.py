@@ -1,9 +1,9 @@
-from graph import GraphList
+from graph import *
 
 def main():
-    graph = GraphList("../examples/as_graph.txt")
-    print(graph.num_vertices)
-    graph.generate_analisys("../output/as_graph_out.txt")
+    graph = GraphList("../examples/teste.txt")
+    graph.generate_analisys("../output/as_graph2.txt")
+    graph.bfs(1)
 
 main()
 
