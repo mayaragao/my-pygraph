@@ -36,6 +36,7 @@ class Graph:
             self.add_node(int(relation_list[0])-1,int(relation_list[1])-1)
             self.add_node(int(relation_list[1])-1,int(relation_list[0])-1)
             self.num_edges += 1
+        input_file.close()
     
     def generate_analisys(self, output_path):
         self._set_min_max_degree()
@@ -47,6 +48,7 @@ class Graph:
         output_file.write(f"Min degree: {self.min_degree}\n")
         output_file.write(f"Avg degree: {self.avg_degree}\n")
         output_file.write(f"Median: {self.median}\n")
+        output_file.close()
 
 class GraphList(Graph):
     adjacency_list = []
@@ -73,7 +75,7 @@ class GraphList(Graph):
         count = len(degrees_list)
 
         if count % 2 == 0:
-            self.median = (degrees_list[count/2] + degrees_list[(count/2)+1])/2
+            self.median = (degrees_list[int(count/2)] + degrees_list[int(count/2)+1])/2
         else:
             self.median = degrees_list[int(count/2)+1]
         
@@ -91,30 +93,48 @@ class GraphList(Graph):
         parent_array = []
 
         q = queue.Queue()
-       
-        # 0 para não descoberto
-        # 1 para descoberto
-        # 2 para explorado
 
         for _ in range(0, self.num_vertices):
-            tag_array.append(0)
+            tag_array.append(False)
             parent_array.append(0)
             level_array.append(0)
 
         q.put_nowait(root)
         level_array [root] = 0
+        tag_array[root] = True
 
         while not q.empty():
             vertex = q.get_nowait()
             for neighbour_str in self.adjacency_list[vertex].get_list():
                 neighbour = int(neighbour_str)
-                if tag_array[neighbour] == 0:
+                if tag_array[neighbour] == False:
                     q.put_nowait(neighbour)
                     parent_array[neighbour] = vertex
                     level_array[neighbour] = level_array[neighbour] + 1
-                    tag_array[neighbour] = 1
-            tag_array[vertex] = 2
-            print (f"{vertex+1} {parent_array[vertex]+1} {level_array[vertex]+1}\n")
+                    tag_array[neighbour] = True
+#            print (f"{vertex+1} {parent_array[vertex]+1} {level_array[vertex]+1}")
+        return tag_array
+
+    def get_conex_component(self):
+        missing = []
+        components = []
+        count = 0
+        tag_array = bfs(1)
+        
+        while not tag_array.empty():
+            count += 1
+            components.append([])
+            for i, vertex in enumerate(tag_array):
+                if vertex == True:
+                    components[count].append(vertex)
+                    tag_array.pop(i)
+            bfs(tag_array[0])
+        
+        print(components)
+
+        
+
+            
 
 class GraphMatrix(Graph):
     
@@ -148,27 +168,24 @@ class GraphMatrix(Graph):
         parent_array = []
 
         q = queue.Queue()
-       
-        # 0 para não descoberto
-        # 1 para descoberto
-        # 2 para explorado
 
         for _ in range(0, self.num_vertices):
-            tag_array.append(0)
+            tag_array.append(False)
             parent_array.append(0)
             level_array.append(0)
 
         q.put_nowait(root)
         level_array [root] = 0
+        tag_array[root] = True
 
         while not q.empty():
             vertex = q.get_nowait()
             for i, element in enumerate(self.matrix[vertex]):
                 if element == True:
-                    if tag_array[i] == 0:
+                    if tag_array[i] == False:
                         q.put_nowait(i)
                         parent_array[i] = vertex
                         level_array[i] = level_array[i] + 1
-                        tag_array[i] = 1
-            tag_array[vertex] = 2
-            print (f"{vertex+1} {parent_array[vertex]+1} {level_array[vertex]+1}")
+                        tag_array[i] = True
+
+#            print (f"{vertex+1} {parent_array[vertex]+1} {level_array[vertex]+1}")

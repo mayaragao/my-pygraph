@@ -1,9 +1,30 @@
 from graph import *
+import time
+import random
 
 def main():
-    graph = GraphList("../examples/teste.txt")
-    graph.generate_analisys("../output/as_graph_may.txt")
-    graph.bfs(1)
+    print("Loading graph...")
+    graph = GraphList("../examples/dblp.txt")
+    print("Loaded!")
+    array = []
+    
+    for i in range(0,10):
+        start_time = time.time()
+        graph.bfs(random.randint(1,graph.num_vertices))
+        print(i)
+        now = time.time() - start_time
+        array.append(now)
+        print(now)
+
+    sum = 0
+    for x in array:
+        sum += x
+
+    media = sum/len(array)
+
+    print(f"Tempo médio {media}s!!")
+    
+
 
 main()
 
