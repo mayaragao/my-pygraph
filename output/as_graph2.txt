@@ -1,5 +1,0 @@
-Total vertices: 7
-Total edges: 9
-Max degree: 3
-Min degree: 2
-Avg degree: 1.2857142857142858
