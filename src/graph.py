@@ -10,7 +10,7 @@ class Graph:
     min_degree = 0
     max_degree = 0
     avg_degree = 0
-    mediana = 0
+    median = 0
 
     @abstractmethod
     def add_node(self, v1, v2): pass
@@ -46,6 +46,7 @@ class Graph:
         output_file.write(f"Max degree: {self.max_degree}\n")
         output_file.write(f"Min degree: {self.min_degree}\n")
         output_file.write(f"Avg degree: {self.avg_degree}\n")
+        output_file.write(f"Median: {self.median}\n")
 
 class GraphList(Graph):
     adjacency_list = []
@@ -58,16 +59,24 @@ class GraphList(Graph):
             self.adjacency_list.append(SinglyLinkedList())
 
     def _set_min_max_degree(self):
+        degrees_list = []
         self.min_degree = self.num_vertices
         self.max_degree = 0
         for element in self.adjacency_list:
-            print("This element:" + str(element.num_itens))
+            degrees_list.append(element.num_itens)
             if element.num_itens < self.min_degree:
                 self.min_degree = element.num_itens
-                print("New min:" + str(element.num_itens))
             if element.num_itens > self.max_degree:
                 self.max_degree = element.num_itens
-                print("New max:" + str(element.num_itens))
+
+        degrees_list.sort()
+        count = len(degrees_list)
+
+        if count % 2 == 0:
+            self.median = (degrees_list[count/2] + degrees_list[(count/2)+1])/2
+        else:
+            self.median = degrees_list[int(count/2)+1]
+        
 
     def add_node(self, v1, v2):
         self.adjacency_list[v1].append(v2)
@@ -76,9 +85,7 @@ class GraphList(Graph):
             self.max_degree = self.adjacency_list[v1].num_itens
     
     def bfs(self, root):
-
-        print("BFS!")
-        root = root - 1
+        root = root-1
         level_array = []
         tag_array = []
         parent_array = []
@@ -98,9 +105,7 @@ class GraphList(Graph):
         level_array [root] = 0
 
         while not q.empty():
-            print("WHILE")
             vertex = q.get_nowait()
-
             for neighbour_str in self.adjacency_list[vertex].get_list():
                 neighbour = int(neighbour_str)
                 if tag_array[neighbour] == 0:
@@ -109,9 +114,7 @@ class GraphList(Graph):
                     level_array[neighbour] = level_array[neighbour] + 1
                     tag_array[neighbour] = 1
             tag_array[vertex] = 2
-            print (f"{vertex} {parent_array[vertex]} {level_array[vertex]}\n")
-     
-
+            print (f"{vertex+1} {parent_array[vertex]+1} {level_array[vertex]+1}\n")
 
 class GraphMatrix(Graph):
     
@@ -136,3 +139,36 @@ class GraphMatrix(Graph):
                 self.min_degree = column_degree
             if column_degree > self.max_degree:
                 self.max_degree = column_degree
+
+
+    def bfs(self, root):
+        root = root-1
+        level_array = []
+        tag_array = []
+        parent_array = []
+
+        q = queue.Queue()
+       
+        # 0 para não descoberto
+        # 1 para descoberto
+        # 2 para explorado
+
+        for _ in range(0, self.num_vertices):
+            tag_array.append(0)
+            parent_array.append(0)
+            level_array.append(0)
+
+        q.put_nowait(root)
+        level_array [root] = 0
+
+        while not q.empty():
+            vertex = q.get_nowait()
+            for i, element in enumerate(self.matrix[vertex]):
+                if element == True:
+                    if tag_array[i] == 0:
+                        q.put_nowait(i)
+                        parent_array[i] = vertex
+                        level_array[i] = level_array[i] + 1
+                        tag_array[i] = 1
+            tag_array[vertex] = 2
+            print (f"{vertex+1} {parent_array[vertex]+1} {level_array[vertex]+1}")
