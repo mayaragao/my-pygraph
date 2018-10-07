@@ -13,7 +13,7 @@ class Graph:
     median = 0
 
     @abstractmethod
-    def add_edge(self, v1, v2): pass
+    def add_node(self, v1, v2): pass
 
     @abstractmethod
     def _initialize_data_str(self): pass
@@ -27,17 +27,17 @@ class Graph:
     def _set_avg_degree(self):
         self.avg_degree = self.num_edges / self.num_vertices
 
-    def __init__(self, input_path):
+    def initWithFile(self, input_path):
         input_file = open(input_path, "r")
-        self.num_vertices = 
+        
         self._initialize_data_str(int(input_file.readline()))
+        
         for line in input_file:
             relation_list = line.split(" ")
-            self.add_edge(int(relation_list[0])-1,int(relation_list[1])-1)
-            self.add_edge(int(relation_list[1])-1,int(relation_list[0])-1)
+            self.add_node(int(relation_list[0])-1,int(relation_list[1])-1)
+            self.add_node(int(relation_list[1])-1,int(relation_list[0])-1)
             self.num_edges += 1
         input_file.close()
-
     
     def generate_analisys(self, output_path):
         self._set_min_max_degree()
@@ -81,7 +81,7 @@ class GraphList(Graph):
             self.median = degrees_list[int(count/2)+1]
         
 
-    def add_edge(self, v1, v2):
+    def add_node(self, v1, v2):
         self.adjacency_list[v1].append(v2)
         
         if self.adjacency_list[v1].num_itens > self.max_degree:
@@ -142,7 +142,7 @@ class GraphMatrix(Graph):
     def __init__(self, input_path):
         super().__init__(input_path)
 
-    def add_edge(self, v1, v2):
+    def add_node(self, v1, v2):
         self.matrix[v1][v2] = True    
 
     def _initialize_data_str(self):
