@@ -4,7 +4,8 @@ import random
 
 def main():
     print("Loading graph...")
-    graph = GraphList("../examples/dblp.txt")
+    graph = GraphList()
+    graph.initWithFile("../examples/grafo_1.txt")
     print("Loaded!")
     array = []
     

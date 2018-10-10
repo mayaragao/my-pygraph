@@ -1,8 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from linked_list import SinglyLinkedList
 import queue
-import math
 import heapq
+import math
 
 class Graph:
     __metaclass__ = ABCMeta
@@ -15,13 +15,13 @@ class Graph:
     median = 0
 
     @abstractmethod
-    def add_node(self, v1, v2, weight): pass
+    def add_edge(self, v1, v2, weight): pass
 
     @abstractmethod
     def get_neighbour_list(self, vertex): pass
 
     @abstractmethod
-    def _initialize_vetices(self, num_vertices): pass
+    def _initialize_vertices(self, num_vertices): pass
 
     def _set_avg_degree(self):
         self.avg_degree = self.num_edges / self.num_vertices
@@ -29,28 +29,35 @@ class Graph:
     def initWithFile(self, input_path):
         input_file = open(input_path, "r")
         
-        self._initialize_vetices(int(input_file.readline()))
+        self._initialize_vertices(int(input_file.readline()))
         
         for line in input_file:
             relation_list = line.split(" ")
-            self.add_node(int(relation_list[0])-1,int(relation_list[1])-1,int(relation_list[2]))
-            self.add_node(int(relation_list[1])-1,int(relation_list[0])-1,int(relation_list[2]))
+            self.add_edge(int(relation_list[0])-1,int(relation_list[1])-1,int(relation_list[2]))
+            self.add_edge(int(relation_list[1])-1,int(relation_list[0])-1,int(relation_list[2]))
             self.num_edges += 1
         
         input_file.close()
 
-    def dijkstra(self, source):
+    def dijkstra(self, start):
         dist = [math.inf] * self.num_vertices
         prev = [None] * self.num_vertices
-        heap = heapq.heapify([range(0, self.num_vertices)])
-
+        heap = [(0, start)]
         
+        while heap:
+            path_len, v = heappop(heap)
+            if dist[v] is None: # v is unvisited
+                dist[v] = path_len
+                for w, edge_len in get_neighbour_list(v):
+                    if dist[w] > dist[v] + edge_len:
+                        dist[w] = dist[v] + edge_len
+                    
 
-        while (not heap.empty()):
-            u = heapq.heappop(heap)
+            return [0 if x is None else x for x in dist] 
 
-            for neighbour in get_neighbour_list(u):
-                aux = dist[u]
+
+    def shortest_path(self, v1, v2):
+        self.dijkstra(v1)                
             
 
 
@@ -83,7 +90,7 @@ class GraphList(Graph):
         self.num_vertices = num_vertices
         self.adjacency_list = [SinglyLinkedList()] * num_vertices
     
-    def add_node(self, v1, v2, weight):
+    def add_edge(self, v1, v2, weight):
         self.adjacency_list[v1].append((v2, weight))
 
     def get_neighbour_list(self, vertex)?
